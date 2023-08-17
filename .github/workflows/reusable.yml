@@ -7,8 +7,17 @@ on:
         required: false
         default: dist
         type: string
+    outputs:
+      result:
+        description: "The result of the deployment"
+        value: ${{ jobs.deploy.outputs.outcome }}
+    # secrets:
+    #   some-secret:
+    #     required: false
 jobs:
   deploy:
+    outputs:
+      outcome: ${{ steps.step-result.outputs.step-result }}
     runs-on: ubuntu-latest
     steps:
       - name: Get Code
@@ -16,6 +25,9 @@ jobs:
         with:
           name: ${{ inputs.artifact-name }}
       - name: List Files
-        run: ls 
+        run: ls
       - name: Output Information
         uses: echo "Deploying & Uploading..."
+      - name: Set Result output
+        id: step-result
+        uses: echo "step-result=success"
